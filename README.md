@@ -1,7 +1,7 @@
 # ExStream
 This is a PyTorch implementation of the ExStream method from our paper "Memory Efficient Experience Replay for Streaming Learning." (https://arxiv.org/abs/1809.05922) 
 
-If using this code, please cite: T.L. Hayes, N.D. Cahill, and C. Kanan. Memory efficient experience replay in streaming learning. In: Proc. IEEE International Conference on Robotics and Automation (ICRA), 2019
+If using this code, please cite: T.L. Hayes, N.D. Cahill, and C. Kanan. Memory efficient experience replay for streaming learning. In: Proc. IEEE International Conference on Robotics and Automation (ICRA), 2019
 
 Run the main function of 'run_exstream_experiment.py' to generate the results for the CUB-200 experiment with capacity sizes [2,4,8,16] for the 'iid' and 'class_iid' data orderings. 
 
