@@ -38,8 +38,36 @@ class ExStream(nn.Module):
         self.buffer_counts = torch.zeros(self.num_classes).cuda(self.gpu_id)  # total number of samples in each buffer
 
         # make the MLP classifier
+        self.classifier = self.make_mlp_classifier(seed, shape, activation, batch_norm, dropout)
+
+        # make the optimizer
+        self.optimizer = optim.Adam(self.parameters(), lr=self.lr, weight_decay=self.weight_decay)
+
+    def init_weights(self, m):
+        # for initializing network weights
+        if type(m) == nn.Linear:
+            size = m.weight.size()
+            fan_out = size[0]
+            fan_in = size[1]
+            # glorot normal weight initialization
+            torch.nn.init.normal_(m.weight, mean=0., std=math.sqrt(2 / (fan_in + fan_out)))
+            m.bias.data.fill_(1)
+
+    def forward(self, x):
+        return self.classifier(x)
+
+    def make_mlp_classifier(self, seed, shape, activation, batch_norm, dropout):
+        """
+        Set up the MLP classifier.
+        :param seed: random seed for intitializing weights
+        :param shape: list of layer sizes [input_shape, hidden_layer1_shape, hidden_layer2_shape, ... , output_shape]
+        :param activation: choice of relu or elu activation
+        :param batch_norm: True for batch norm
+        :param dropout: dropout probability
+        :return: classifier
+        """
         torch.manual_seed(seed)
-        self.classifier = nn.Sequential()
+        classifier = nn.Sequential()
         for i in range(len(shape) - 2):
             layer = nn.Linear(shape[i], shape[i + 1])
             layer.apply(self.init_weights)
@@ -59,26 +87,11 @@ class ExStream(nn.Module):
                     layer = nn.Sequential(layer, act, nn.Dropout(p=dropout))
                 else:
                     layer = nn.Sequential(layer, act)  # no dropout before final layer
-            self.classifier.add_module(str(i), layer)
+            classifier.add_module(str(i), layer)
         layer = nn.Linear(shape[-2], shape[-1])
         layer.apply(self.init_weights)
-        self.classifier.add_module('output', layer)
-
-        # make the optimizer
-        self.optimizer = optim.Adam(self.parameters(), lr=self.lr, weight_decay=self.weight_decay)
-
-    def init_weights(self, m):
-        # for initializing network weights
-        if type(m) == nn.Linear:
-            size = m.weight.size()
-            fan_out = size[0]
-            fan_in = size[1]
-            # glorot normal weight initialization
-            torch.nn.init.normal_(m.weight, mean=0., std=math.sqrt(2 / (fan_in + fan_out)))
-            m.bias.data.fill_(1)
-
-    def forward(self, x):
-        return self.classifier(x)
+        classifier.add_module('output', layer)
+        return classifier
 
     def fit(self, X, y):
         """
@@ -115,7 +128,7 @@ class ExStream(nn.Module):
             output = torch.zeros((samples, self.num_classes))
             for i in range(0, samples, mb):
                 start = min(i, samples - mb)
-                end = i + mb
+                end = start + mb
                 X_ = X[start:end]
                 output[start:end] = model(X_).data.cpu()
             preds = output.data.max(1)[1]
@@ -145,7 +158,7 @@ class ExStream(nn.Module):
         mb = min(self.batch_size, num_samples)
         for i in range(0, num_samples, mb):
             start = min(i, num_samples - mb)
-            end = i + mb
+            end = start + mb
             X_ = X[start:end]
             y_ = y[start:end]
 
