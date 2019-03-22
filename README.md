@@ -23,6 +23,7 @@ To generate plots for each of the experimental results:
 Our original paper used class-specific buffers for storing exemplars. In this implementation, you can maintain class-specific buffers by setting the `buffer_type parameter` to `class`; we also give the option to maintain a single buffer that will fill to full capacity and then begin replacement/merging by setting the `buffer_type` parameter to `single`
 
 ## Results
+![ExStream](./images/legend.png)
 ### CUB-200 - iid
 ![ExStream](./images/cub200_iid_omega_all.png)
 
