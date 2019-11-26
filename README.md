@@ -1,16 +1,16 @@
 Memory Efficient Experience Replay for Streaming Learning
 =====================================
-This is a PyTorch implementation of the Exemplar Streaming (ExStream) algorithm from our ICRA-2019 paper. An [arXiv pre-print](https://arxiv.org/abs/1809.05922) of our paper is available.
+This is a PyTorch implementation of the Exemplar Streaming (ExStream) algorithm from our ICRA-2019 paper. An [arXiv pre-print](https://arxiv.org/abs/1809.05922) and the [published version](https://ieeexplore.ieee.org/document/8793982) of our paper are available.
 
 
 ## Method
 ![ExStream](./images/Rehearsal_Diagram.png)
 
 ## Dependences 
-- Python3.5, PyTorch 1.0.0, NumPy, SciPy, scikit-learn, NVIDIA GPU
+- Python 3.5, PyTorch 1.0.0, NumPy, SciPy, scikit-learn, NVIDIA GPU
 - **Dataset:** 
   - CUB-200 -- ResNet-50 embeddings (included in `cub200_resnet`)
-  ![ExStream](./images/cub200.png)
+  ![ExStream](./images/cub200.png) version  version 
   
 ## Usage
 To generate results for the CUB-200 experiment with capacities [2,4,8,16] for the iid and class iid data orderings:
